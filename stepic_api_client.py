@@ -4,6 +4,8 @@ import csv
 
 
 class Course:
+    """ Класс курса. Все данные и свойства курса представлены в виде атрибутов класса для более удобного доступа.
+        Удобно, если работаете с небольшим количеством курсов и с определенными данными. """
 
     def __init__(self, course_info: dict):
 
@@ -58,6 +60,8 @@ class Course:
         self.update_date = course_info["update_date"]
 
     def select_info(self, info_name: list):
+        """ Функция, которая принимает список с названиями атрибутов
+            и возвращает словарь со значениями этих атрибутов."""
 
         sorted_dict = {}
 
@@ -123,7 +127,11 @@ class StepikClient:
         return courses
 
 
-def write_csv(path, fieldnames: list, data: list):
+def write_csv(path: str, fieldnames: list, data: list):
+    """ функция для записи данных в csv-файл.
+        path - путь и имя файла
+        fieldnames - список с названиями для колонок
+        data - данные, которые нужно записать""" 
 
     with open(path, "a", newline='') as out_file:
 
@@ -134,18 +142,26 @@ def write_csv(path, fieldnames: list, data: list):
 
 
 if __name__ == "__main__":
-
+    # импортируем отдельный файл, в котором храним id и secret
     from stepic_client import CLIENT_ID, CLIENT_SECRET
-
-    test = StepikClient(CLIENT_ID, CLIENT_SECRET)
-
-    my_course = test.get_course(67)
-    #course_list = test.get_many_courses([67,512, 401,50352])
-
+    
+    # создаем экземпляр клиента, производится аутентификация
+    client = StepikClient(CLIENT_ID, CLIENT_SECRET)
+    
+    # скачиваем данные определенного курса по его id
+    my_course = client.get_course(67)
+    
+    # скачиваем данные нескольких курсов по их id
+    course_list = test.get_many_courses([67,512, 401,50352])
+    
+    # создаем список с названиям для колонок по ключам из класса Course
     columns = list(my_course.__dict__.keys())
-
+    
+    # скачиваем данные курсов с id c 1000 по 1500
+    # fail_flag = False - если данные не удалось скачать, то НЕ выводить сообщение о неудаче
     first_courses = test.get_many_courses(range(1000,1500), fail_flag=False)
 
+    # записываем полученные данные в файл csv для дальнейшей обработки
     write_csv("test.csv", columns, first_courses)
 
 
